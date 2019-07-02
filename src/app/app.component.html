@@ -1,0 +1,7 @@
+<div style="text-align:center">
+  <h1>
+    Welcome to {{ title }}!
+  </h1>
+  <app-my-form (inputChange)="setMyString($event)"></app-my-form>
+  <app-anagramm-listing [anaCandidate$]="myString$"></app-anagramm-listing>
+</div>

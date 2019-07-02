@@ -1,0 +1,9 @@
+<form [formGroup]="myForm" >
+  <input id="word-input" type="text" formControlName="wordInput"/>
+  <button id="word-submit" (click)="handleSubmit()">Submit</button>
+  <ul *ngIf="!myForm.controls.wordInput.pristine && myForm.controls.wordInput.errors">
+    <li *ngFor="let error of (myForm.controls.wordInput.errors | keyvalue)">
+      {{error.key}}: {{error.value}}
+    </li>
+  </ul>
+</form>
