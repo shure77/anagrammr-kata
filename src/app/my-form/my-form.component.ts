@@ -12,14 +12,17 @@ export class MyFormComponent {
 
   @Output()
   public inputChange = new EventEmitter<string>();
+  public inputValue = '';
 
   constructor(private formBuilder: FormBuilder) {
     this.myForm = this.formBuilder.group({
-      wordInput: ['', [Validators.required, this.noWhitspaces]],
+      wordInput: ['', [Validators.required, Validators.pattern('^[a-zA-Z \-\']+'), this.noWhitspaces]],
     });
   }
 
   public handleSubmit() {
+    this.inputValue = this.myForm.value.wordInput;
+    this.inputChange.emit(this.inputValue);
   }
 
   public noWhitspaces(control: AbstractControl): ValidationErrors | null {

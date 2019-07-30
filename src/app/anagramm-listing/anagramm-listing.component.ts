@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
+import { DictonaryService } from '../dictonary.service';
 
 interface Colorable {
   color: string;
@@ -16,21 +17,42 @@ export interface ColoredAnagramm extends Colorable {
 export class AnagrammListingComponent implements OnInit {
   @Input()
   public anaCandidate$!: Observable<string>;
+  characterA: string[] = [];
 
-  public anagrams: ColoredAnagramm[] = [];
-
-  // private readonly colorCodes = {
-  //   colored: 'red',
-  //   uncolored: 'white',
-  // };
+  private readonly colorCodes = {
+    colored: 'red',
+    uncolored: 'white',
+  };
+  
+  public anagrams: ColoredAnagramm[] = [
+    {value: 'kaese', color: this.colorCodes.colored},
+    {value: 'bleistift', color: this.colorCodes.uncolored},
+    {value: 'flasche', color: ''}
+  ];
+  
 
   constructor(
-    // private dictonaryService: DictonaryService,
+    private dictonaryService: DictonaryService
   ) {}
 
   ngOnInit() {
-
-  }
+    // this.anaCandidate$.subscribe(
+    //   (controlValue) => {
+    //     console.log(this.findAllPermutations(controlValue));
+    //     this.anagrams.push({value: controlValue, color: ''});
+    //     console.log(this.anagrams);
+    //   }
+    // );
+    this.anaCandidate$.subscribe(
+      (controlValue) => {
+        console.log(controlValue);
+        this.dictonaryService.getWordsByFirstLetter$(controlValue).subscribe(
+          // (character) => {
+          //   this.characterA.push(character);
+          // }
+        );
+      });
+    }
 
   /**
    * This function implements an algorithm to produce each anagram for the given str
