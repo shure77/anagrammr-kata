@@ -31,20 +31,19 @@ export class AnagrammListingComponent implements OnInit, OnChanges {
     //private dictonaryService: DictonaryService
   ) {}
 
+  //map, mergeMap, forkJoin
+
   ngOnInit() {
-     this.anaCandidate$.pipe( //map, mergeMap, forkJoin
-      map( val => this.findAllPermutations(val))
+     this.anaCandidate$.pipe(
+      map( val => this.findAllPermutations(val)),
+      map((anagrams) => anagrams.map((value) => ({value, color: this.colorCodes.uncolored}))) // funktionales coding. Hier funktioniert anagrams.map((value).......) wie eine FOR Schleife
     )
       .subscribe(
-        (val) => {
-          for(const i of val) {
-            this.anagrams.push({value: i, color: this.colorCodes.uncolored});
-          }
-        }
+        val => this.anagrams = val
       );
   }
 
-    ngOnChanges() {}
+    ngOnChanges() {    }
 
   /**
    * This function implements an algorithm to produce each anagram for the given str

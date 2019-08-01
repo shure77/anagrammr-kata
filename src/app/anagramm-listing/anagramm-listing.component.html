@@ -1,4 +1,4 @@
   <ul>
-  <li *ngFor="let anagramm of anagrams" [ngStyle]="{'background-color': anagramm.color}">{{anagramm.value}}</li>
+  <li *ngFor="let anagramm of anagrams | noDups" [ngStyle]="{'background-color': anagramm.color}">{{anagramm.value}}</li>
 </ul>
 <!-- <p>{{anagrams | json}}</p> -->
