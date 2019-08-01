@@ -1,6 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnChanges } from '@angular/core';
 import { Observable } from 'rxjs';
-import { DictonaryService } from '../dictonary.service';
+// import { DictonaryService } from '../dictonary.service';
+import { map } from 'rxjs/operators';
 
 interface Colorable {
   color: string;
@@ -14,9 +15,9 @@ export interface ColoredAnagramm extends Colorable {
   templateUrl: './anagramm-listing.component.html',
   styleUrls: ['./anagramm-listing.component.sass']
 })
-export class AnagrammListingComponent implements OnInit {
+export class AnagrammListingComponent implements OnInit, OnChanges {
   @Input()
-  public anaCandidate$!: Observable<string>;
+  public anaCandidate$!: Observable<string>; //! heißt dass anaCandidate$ nicht null oder undefined sein kann
   characterA: string[] = [];
 
   private readonly colorCodes = {
@@ -24,35 +25,26 @@ export class AnagrammListingComponent implements OnInit {
     uncolored: 'white',
   };
   
-  public anagrams: ColoredAnagramm[] = [
-    {value: 'kaese', color: this.colorCodes.colored},
-    {value: 'bleistift', color: this.colorCodes.uncolored},
-    {value: 'flasche', color: ''}
-  ];
-  
+  public anagrams: ColoredAnagramm[] = [];
 
   constructor(
-    private dictonaryService: DictonaryService
+    //private dictonaryService: DictonaryService
   ) {}
 
   ngOnInit() {
-    // this.anaCandidate$.subscribe(
-    //   (controlValue) => {
-    //     console.log(this.findAllPermutations(controlValue));
-    //     this.anagrams.push({value: controlValue, color: ''});
-    //     console.log(this.anagrams);
-    //   }
-    // );
-    this.anaCandidate$.subscribe(
-      (controlValue) => {
-        console.log(controlValue);
-        this.dictonaryService.getWordsByFirstLetter$(controlValue).subscribe(
-          // (character) => {
-          //   this.characterA.push(character);
-          // }
-        );
-      });
-    }
+     this.anaCandidate$.pipe( //map, mergeMap, forkJoin
+      map( val => this.findAllPermutations(val))
+    )
+      .subscribe(
+        (val) => {
+          for(const i of val) {
+            this.anagrams.push({value: i, color: this.colorCodes.uncolored});
+          }
+        }
+      );
+  }
+
+    ngOnChanges() {}
 
   /**
    * This function implements an algorithm to produce each anagram for the given str

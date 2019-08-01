@@ -14,7 +14,7 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.myString$
     .pipe(
-      filter((val) => !!val),
+      filter((val) => !!val), // !! sollte den value in einen boolean umwandeln. Michi fragen ob das hier irgendwie sinnvoll ist oder eher verwirren soll ;)
     )
     .subscribe(
       (myString) => console.log('We got a new value! ' + myString),
