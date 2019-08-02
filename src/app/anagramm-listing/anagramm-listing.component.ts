@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, OnChanges } from '@angular/core';
-import { Observable } from 'rxjs';
-// import { DictonaryService } from '../dictonary.service';
-import { map } from 'rxjs/operators';
+import { Observable, forkJoin } from 'rxjs';
+import { DictonaryService } from '../dictonary.service';
+import { map, tap, mergeMap } from 'rxjs/operators';
 
 interface Colorable {
   color: string;
@@ -19,25 +19,37 @@ export class AnagrammListingComponent implements OnInit, OnChanges {
   @Input()
   public anaCandidate$!: Observable<string>; //! heißt dass anaCandidate$ nicht null oder undefined sein kann
   characterA: string[] = [];
+  currentValue = '';
+  dictEntries = [];
 
   private readonly colorCodes = {
-    colored: 'red',
+    colored: 'yellow',
     uncolored: 'white',
   };
   
   public anagrams: ColoredAnagramm[] = [];
 
   constructor(
-    //private dictonaryService: DictonaryService
+    private dictonaryService: DictonaryService
   ) {}
 
   //map, mergeMap, forkJoin
 
   ngOnInit() {
-     this.anaCandidate$.pipe(
-      map( val => this.findAllPermutations(val)),
-      map((anagrams) => anagrams.map((value) => ({value, color: this.colorCodes.uncolored}))) // funktionales coding. Hier funktioniert anagrams.map((value).......) wie eine FOR Schleife
-    )
+      this.dictEntries = this.dictonaryService.getAllDictEntries(); // ich hole mir die Wörterbucheinträge, um später zu schauen ob der Input Value mit einem Eintrag im Wörterbuch übereinstimmt
+      this.anaCandidate$.pipe(
+      tap(val => this.currentValue = val),  // ich speichere den Input Value
+      map( anaCandidate => anaCandidate.split('')), // den eingegebenen value auf einzelne Letters splitten
+      mergeMap( letters => forkJoin(letters.map((letter) => this.dictonaryService.getWordsByFirstLetter$(letter)))), // jeder letter wird durch getWordsByFirstLetter$() geschickt und liefert ein Observable retour, mit forkJoin wird der letzte Value eines jeden Observables emitted und durch mergeMap zusammengefasst
+      tap ( array => array.push(this.currentValue)), // ich füge den input Value zu den von den observables gelieferten values hinzu
+      map( elements => elements.filter( element => element !== undefined)), // ich bekomme einen Array of Arrays retour, alle undefined values werden herausgefiltert
+      map( nestedArray => nestedArray.flat()), // der nested Array wird zu einem normalen Array geflattet
+      map (elements => elements.map( element => element.toLowerCase())), // ich wandle jeden Array Eintrag in lowercase um
+      map (elements => elements.filter( element => element === this.currentValue)), // ich filtere den input value aus dem array
+      map( elements => elements.map( val => this.findAllPermutations(val))), //jetzt schicke ich den input array durch findAllPermutations
+      map(val => val.flat()), // ich mach das permutations Ergebnis zu einem flat array
+      map( flatArray => flatArray.map((value) => (this.dictEntries.indexOf(this.currentValue) > -1 ? {value: value, color: this.colorCodes.colored}: {value: value, color: this.colorCodes.uncolored } ))), //jeden einzelnen permuatation value verwende ich nun, um das benötigte Objekt zu erstellen
+      )
       .subscribe(
         val => this.anagrams = val
       );
@@ -84,4 +96,5 @@ export class AnagrammListingComponent implements OnInit, OnChanges {
     }
     return str.join('');
   }
+
 }
