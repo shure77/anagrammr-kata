@@ -33,11 +33,12 @@ export class AnagrammListingComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.anaCandidate$
       .pipe(
-        map(anaCandidate => ({
-          anaCandidate,
-          letters: anaCandidate.split("")
+        map(anaCandidate => anaCandidate.toLowerCase()), // den anaCandidate auf lowercase umwandeln
+        map(lowerCaseCandidate => ({
+          lowerCaseCandidate,
+          letters: lowerCaseCandidate.split("")
         })), // den eingegebenen value auf einzelne Letters splitten
-        mergeMap(({ letters, anaCandidate }) => // destructuring
+        mergeMap(({ letters, lowerCaseCandidate }) => // destructuring
           forkJoin(
             letters.map(letter =>
               this.dictonaryService.getWordsByFirstLetter$(letter)
@@ -47,37 +48,21 @@ export class AnagrammListingComponent implements OnInit, OnChanges {
             map(filteredvalue =>
               filteredvalue.reduce((previous, next) => [...previous, ...next], []) // der Array wird geflattet
             ),
-            map(dictEntries => ({ dictEntries, anaCandidate })), // ein objekt mit der Arrayliste aus dictEntries und dem anaCandidate wird erzeugt
+            map(dictEntries => dictEntries.map(element => element.toLocaleLowerCase())),
+            map(lowerCaseDictEntries => ({ lowerCaseDictEntries, lowerCaseCandidate })), // ein objekt mit der Arrayliste aus dictEntries und dem anaCandidate wird erzeugt
           )
         ), // jeder letter wird durch getWordsByFirstLetter$() geschickt und liefert ein Observable retour, mit forkJoin wird der letzte Value eines jeden Observables emitted und durch mergeMap zusammengefasst
-        map(({ dictEntries, anaCandidate }) => ({
-          permutations: this.findAllPermutations(anaCandidate),
-          dictEntries
+        map(({ lowerCaseDictEntries, lowerCaseCandidate }) => ({
+          permutations: this.findAllPermutations(lowerCaseCandidate),
+          lowerCaseDictEntries
         })), //ich erstelle ein Objekt mit meinen permutations und meinen dictEntries
-        map(({ permutations, dictEntries }) =>
+        map(({ permutations, lowerCaseDictEntries }) =>
           permutations.map(value =>
-            dictEntries.indexOf(value) > -1
+            lowerCaseDictEntries.indexOf(value) > -1
               ? { value, color: this.colorCodes.colored }
               : { value, color: this.colorCodes.uncolored }
           )
         ) // ich erstelle ein Objekt aus jeder meiner Permutations. Ich checke ob eine der Permuations ein Eintrag im Wörterbuch ist und färbe demnach den Eintrag ein oder nicht.
-
-        // tap(array => array.push(this.currentValue)), // ich füge den input Value zu den von den observables gelieferten values hinzu
-        // map(elements => elements.filter(element => element !== undefined)), // ich bekomme einen Array of Arrays retour, alle undefined values werden herausgefiltert
-        // map(nestedArray => nestedArray.flat()!), // der nested Array wird zu einem normalen Array geflattet
-        // map(elements => elements.map(element => element.toLowerCase()!)), // ich wandle jeden Array Eintrag in lowercase um
-        // map(elements =>
-        //   elements.filter(element => element === this.currentValue)
-        // ), // ich filtere den input value aus dem array
-        // map(elements => elements.map(val => this.findAllPermutations(val))), //jetzt schicke ich den input array durch findAllPermutations
-        // map(val => val.flat()), // ich mach das permutations Ergebnis zu einem flat array
-        // map(flatArray =>
-        //   flatArray.map(value =>
-        //     this.dictEntries.indexOf(this.currentValue) > -1
-        //       ? { value: value, color: this.colorCodes.colored }
-        //       : { value: value, color: this.colorCodes.uncolored }
-        //   )
-        //) //jeden einzelnen permuatation value verwende ich nun, um das benötigte Objekt zu erstellen
       )
       .subscribe(coloredAnagrams => (this.anagrams = coloredAnagrams));
   }
