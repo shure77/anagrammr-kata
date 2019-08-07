@@ -29,10 +29,4 @@ export class DictonaryService {
   public getWordsByFirstLetter$(char: string): Observable<string[] | undefined> {
     return of(DictonaryService.dictonary[char]);
   }
-
-  public getAllDictEntries() {
-    let objectToArray = Object.entries(DictonaryService.dictonary);
-    return objectToArray.flat(Infinity).map((val) => val.toLowerCase());
-    
-  }
 }
