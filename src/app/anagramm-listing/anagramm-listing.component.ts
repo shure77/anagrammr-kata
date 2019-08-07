@@ -48,7 +48,7 @@ export class AnagrammListingComponent implements OnInit, OnChanges {
             map(filteredvalue =>
               filteredvalue.reduce((previous, next) => [...previous, ...next], []) // der Array wird geflattet
             ),
-            map(dictEntries => dictEntries.map(element => element.toLocaleLowerCase())),
+            map(dictEntries => dictEntries.map(element => element.toLowerCase())),
             map(lowerCaseDictEntries => ({ lowerCaseDictEntries, lowerCaseCandidate })), // ein objekt mit der Arrayliste aus dictEntries und dem anaCandidate wird erzeugt
           )
         ), // jeder letter wird durch getWordsByFirstLetter$() geschickt und liefert ein Observable retour, mit forkJoin wird der letzte Value eines jeden Observables emitted und durch mergeMap zusammengefasst
