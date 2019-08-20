@@ -45,12 +45,14 @@ describe('AnagrammListingComponent', () => {
   it('should propagate any errors', async(() => {
     // Given
     dictonaryMock.getWordsByFirstLetter$.and.returnValue(throwError(new Error('Just a mock')));
-    spyOn(console, 'warn');
+    spyOn(console, 'warn').and.callFake(() => {
+      expect(console.warn).toHaveBeenCalled();
+    });
 
     // When
-    component.myString$.next('This will fail!');
+    //component.myString$.next('This will fail');
+
 
     // Then
-    expect(console.warn).toHaveBeenCalled();
   }));
 });

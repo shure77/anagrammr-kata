@@ -30,10 +30,12 @@ export class AnagrammListingComponent implements OnInit, OnChanges {
 
   constructor(private dictonaryService: DictonaryService) {}
 
+
+  //named functions aus arrowfunctions machen, zum zweck der Doku! 
   ngOnInit() {
     this.anaCandidate$
       .pipe(
-        map(anaCandidate => anaCandidate.toLowerCase()), // den anaCandidate auf lowercase umwandeln
+        map(anaCandidate => anaCandidate.toLowerCase()), // den anaCandidate auf lowercase umwandeln, sanitasation & sanity checks
         map(lowerCaseCandidate => ({
           lowerCaseCandidate,
           letters: lowerCaseCandidate.split("")
