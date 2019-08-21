@@ -55,4 +55,7 @@ describe('AnagrammListingComponent', () => {
 
     // Then
   }));
+
+  it('should render list of anagrams in li tags');
+  it('should highlight anagram if it is a dictionary entry');
 });

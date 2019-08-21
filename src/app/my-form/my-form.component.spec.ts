@@ -1,8 +1,9 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MyFormComponent } from './my-form.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { Component } from '@angular/core';
+import { By } from '@angular/platform-browser';
 
 @Component({
   template: `<app-my-form (inputChange)="setMyString($event)"></app-my-form>`,
@@ -53,4 +54,31 @@ describe('MyFormComponent', () => {
     // Then
     expect(component.setMyString).toHaveBeenCalledWith(mockInput);
   }));
+
+  it('should set button status to undefined as initial state', () => {
+    const submitButtonD = fixture.debugElement.query(By.css('#word-submit'));
+    const initAttribute = submitButtonD.properties.disabled;
+
+    expect(initAttribute).toBe(true);
+  });
+
+  // problem bei diesem Test! ulTag wird nicht gerendert, auch wenn ein Value im control ist und dieser als nicht pristine und mit error ausgestattet ist
+  xit('should render error message in li tag if input contains any whitespace', () => {
+    let component = new MyFormComponent(new FormBuilder());
+    let control = component.myForm.get('wordInput');
+
+    control!.setValue('a b');
+    control!.markAsDirty();
+
+    let ulTag = fixture.debugElement.query(By.css('ul'));
+    fixture.detectChanges();
+    console.log(ulTag);
+    
+    expect(ulTag).toBeTruthy();
+  });
+
+  it('should NOT render error message if input contains NO whitespace');
+  it('should render error message in li tag if input is not a string');
+  it('should not render error message in li tag if input is pristine');
+  
 });
