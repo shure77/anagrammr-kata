@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { BehaviorSubject, of, throwError } from 'rxjs';
 import { DictonaryService } from '../dictonary.service';
 import { NoDupsPipe } from '../no-dups.pipe';
@@ -56,6 +57,18 @@ describe('AnagrammListingComponent', () => {
     // Then
   }));
 
-  it('should render list of anagrams in li tags');
+  fit('should render list of anagrams in li tags', () => {
+    // Given
+    const listingComponent: AnagrammListingComponent = fixture.debugElement.query(By.css('li')).componentInstance;
+    listingComponent.anagrams = [{ value: 'a', color: 'colored' }, { value: 'b', color: 'colored' }, { value: 'c', color: 'colored' }];
+
+    // When
+    fixture.detectChanges();
+
+    // Then
+    console.log(fixture.nativeElement.querySelector('li'));
+    expect(fixture.nativeElement.querySelector('li')).toBeTruthy();
+  });
+
   it('should highlight anagram if it is a dictionary entry');
 });

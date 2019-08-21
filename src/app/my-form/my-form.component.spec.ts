@@ -97,7 +97,7 @@ describe('MyFormComponent', () => {
     expect(fixture.nativeElement.querySelector('#ana-listing')).toBeTruthy();
   });
 
-  fit('should not render error message in li tag if input is pristine', () => {
+  it('should not render error message in li tag if input is pristine', () => {
     expect(fixture.nativeElement.querySelector('#ana-listing')).toBeFalsy();
   });
   
