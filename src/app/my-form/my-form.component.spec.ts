@@ -75,7 +75,7 @@ describe('MyFormComponent', () => {
     expect(fixture.nativeElement.querySelector('#ana-listing')).toBeTruthy();
   });
 
-  fit('should NOT render error message if input contains NO whitespace', () => {
+  it('should NOT render error message if input contains NO whitespace', () => {
     // Given
     const formComponent: MyFormComponent = fixture.debugElement.query(By.directive(MyFormComponent)).componentInstance;
     // When
@@ -85,7 +85,20 @@ describe('MyFormComponent', () => {
     // Then
     expect(fixture.nativeElement.querySelector('#ana-listing')).toBeFalsy();
   });
-  it('should render error message in li tag if input is not a string');
-  it('should not render error message in li tag if input is pristine');
+
+  it('should render error message in li tag if input is not a string', () => {
+    // Given
+    const formComponent: MyFormComponent = fixture.debugElement.query(By.directive(MyFormComponent)).componentInstance;
+    // When
+    formComponent.myForm.controls.wordInput.setValue('123');
+    formComponent.myForm.controls.wordInput.markAsDirty();
+    fixture.detectChanges();
+    // Then
+    expect(fixture.nativeElement.querySelector('#ana-listing')).toBeTruthy();
+  });
+
+  fit('should not render error message in li tag if input is pristine', () => {
+    expect(fixture.nativeElement.querySelector('#ana-listing')).toBeFalsy();
+  });
   
 });
