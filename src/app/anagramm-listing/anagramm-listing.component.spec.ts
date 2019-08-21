@@ -18,8 +18,6 @@ export class HostComponent {
 describe("AnagrammListingComponent", () => {
   let component: HostComponent;
   let fixture: ComponentFixture<HostComponent>;
-  let service: DictonaryService;
-  service = TestBed.get(DictonaryService);
 
   let dictonaryMock: jasmine.SpyObj<DictonaryService>;
 
